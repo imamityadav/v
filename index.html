@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Open YouTube</title>
@@ -7,22 +7,21 @@
 <body>
 
 <script>
-const params = new URLSearchParams(window.location.search);
-let handle = params.get("handle");
+let handle = decodeURIComponent(location.pathname.split("/").pop());
 
-if (handle) {
+if (!handle || handle === "v") {
+    document.body.innerHTML = "<h2>Missing YouTube Handle</h2>";
+} else {
     handle = handle.replace(/^@/, "");
 
     const webUrl = `https://www.youtube.com/@${encodeURIComponent(handle)}`;
     const intentUrl = `intent://www.youtube.com/@${encodeURIComponent(handle)}#Intent;scheme=https;package=com.google.android.youtube;end`;
 
-    window.location.href = intentUrl;
+    location.href = intentUrl;
 
     setTimeout(() => {
-        window.location.href = webUrl;
+        location.href = webUrl;
     }, 1200);
-} else {
-    document.body.innerHTML = "Missing handle";
 }
 </script>
 
