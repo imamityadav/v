@@ -3,27 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <title>Open YouTube</title>
-</head>
-<body>
-
 <script>
-let handle = decodeURIComponent(location.pathname.split("/").pop());
+const h = new URLSearchParams(location.search).get("h");
 
-if (!handle || handle === "v") {
-    document.body.innerHTML = "<h2>Missing YouTube Handle</h2>";
-} else {
-    handle = handle.replace(/^@/, "");
+if (h) {
+    const u = h.replace(/^@/, "");
 
-    const webUrl = `https://www.youtube.com/@${encodeURIComponent(handle)}`;
-    const intentUrl = `intent://www.youtube.com/@${encodeURIComponent(handle)}#Intent;scheme=https;package=com.google.android.youtube;end`;
-
-    location.href = intentUrl;
+    location.href =
+        `intent://www.youtube.com/@${encodeURIComponent(u)}#Intent;scheme=https;package=com.google.android.youtube;end`;
 
     setTimeout(() => {
-        location.href = webUrl;
-    }, 1200);
+        location.replace(`https://www.youtube.com/@${encodeURIComponent(u)}`);
+    }, 1000);
+} else {
+    document.body.textContent = "Missing handle";
 }
 </script>
-
-</body>
+</head>
+<body></body>
 </html>
