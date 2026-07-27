@@ -4,162 +4,76 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Opening...</title>
-
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    background:#fff;
-    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-    min-height:100vh;
-}
-
-.box{
-    width:100%;
-    text-align:center;
-    padding-top:8vh;
-}
-
-.badge{
-    width:82px;
-    height:82px;
-    margin:auto;
-    border-radius:22px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#fff;
-    font-size:36px;
-    font-weight:800;
-    animation:pulse 1.2s infinite;
-    user-select:none;
-}
-
-.youtube{
-    background:#ff0000;
-    border-radius:18px;
-}
-
-.instagram{
-    background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af,#515bd4);
-}
-
-.facebook{
-    background:#1877f2;
-    border-radius:50%;
-}
-
-.channel{
-    margin-top:22px;
-    font-size:32px;
-    font-weight:800;
-    color:#111;
-    padding:0 20px;
-    word-break:break-word;
-}
-
-.opening{
-    margin-top:10px;
-    font-size:18px;
-    color:#666;
-    font-weight:600;
-    animation:textPulse 1.2s infinite;
-}
-
-@keyframes pulse{
-    0%,100%{
-        transform:scale(1);
-    }
-    50%{
-        transform:scale(1.08);
-    }
-}
-
-@keyframes textPulse{
-    0%,100%{
-        opacity:.55;
-    }
-    50%{
-        opacity:1;
-    }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#fff;min-height:100vh}
+.box{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:8vh;text-align:center}
+.badge{min-width:82px;height:82px;padding:0 20px;border-radius:22px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:36px;animation:pulse 1.2s infinite;white-space:nowrap}
+.youtube{background:#ff0000;border-radius:18px;min-width:82px;padding:0}
+.instagram{background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af,#515bd4);font-size:18px}
+.facebook{background:#1877f2;font-size:18px}
+.channel{margin-top:22px;font-size:32px;font-weight:800;color:#111;padding:0 20px;word-break:break-word}
+.opening{margin-top:10px;font-size:18px;color:#666;font-weight:600;animation:textPulse 1.2s infinite}
+.credit{position:fixed;left:0;right:0;bottom:18px;text-align:center;color:#999;font-size:13px}
+.errorFace{font-size:74px;line-height:1;animation:bounce 1s infinite}
+.eyes{display:inline-block;animation:blink 2.2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes textPulse{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes blink{
+0%,44%,100%{opacity:1}
+45%,49%{opacity:0}
+50%,100%{opacity:1}
 }
 </style>
 </head>
-
 <body>
-
 <div class="box">
-
-<div id="badge" class="badge">Y</div>
-
-<div id="channel" class="channel">
-Loading...
+<div id="badge" class="badge youtube">▶</div>
+<div id="channel" class="channel">Loading...</div>
+<div id="opening" class="opening">Opening...</div>
 </div>
-
-<div id="opening" class="opening">
-Opening...
-</div>
-
-</div>
+<div class="credit">Created by Amit Yadav</div>
 
 <script>
-const p = new URLSearchParams(location.search);
+const $=id=>document.getElementById(id);
+const apps={
+y:{cls:"youtube",badge:"▶",app:u=>`intent://www.youtube.com/@${encodeURIComponent(u)}#Intent;scheme=https;package=com.google.android.youtube;end`,web:u=>`https://www.youtube.com/@${encodeURIComponent(u)}`},
+i:{cls:"instagram",badge:"Instagram",app:u=>`instagram://user?username=${encodeURIComponent(u)}`,web:u=>`https://instagram.com/${encodeURIComponent(u)}`},
+f:{cls:"facebook",badge:"Facebook",app:u=>`fb://facewebmodal/f?href=https://facebook.com/${encodeURIComponent(u)}`,web:u=>`https://facebook.com/${encodeURIComponent(u)}`}
+};
 
-let user = "";
-let app = "";
-let web = "";
-let cls = "youtube";
-let icon = "Y";
-
-if (p.has("y")) {
-    user = p.get("y").replace(/^@/, "");
-    cls = "youtube";
-    icon = "▶";
-    app = `intent://www.youtube.com/@${encodeURIComponent(user)}#Intent;scheme=https;package=com.google.android.youtube;end`;
-    web = `https://www.youtube.com/@${encodeURIComponent(user)}`;
-}
-else if (p.has("i")) {
-    user = p.get("i").replace(/^@/, "");
-    cls = "instagram";
-    icon = "I";
-    app = `instagram://user?username=${encodeURIComponent(user)}`;
-    web = `https://instagram.com/${encodeURIComponent(user)}`;
-}
-else if (p.has("f")) {
-    user = p.get("f").replace(/^@/, "");
-    cls = "facebook";
-    icon = "F";
-    app = `fb://facewebmodal/f?href=https://facebook.com/${encodeURIComponent(user)}`;
-    web = `https://facebook.com/${encodeURIComponent(user)}`;
-}
-else{
-    document.getElementById("channel").textContent="Invalid Link";
-    document.getElementById("opening").textContent="Missing parameter";
-    throw "";
+const params=new URLSearchParams(location.search);
+let key,user;
+for(const k in apps){
+ if(params.has(k)){key=k;user=params.get(k).replace(/^@/,"");break;}
 }
 
-const badge=document.getElementById("badge");
+if(!key){
+ document.querySelector(".box").innerHTML=`
+ <div class="errorFace">(<span class="eyes">• •</span>)</div>
+ <div class="channel">Oops!</div>
+ <div class="opening">
+ This link is incomplete.<br>
+ Please check the URL.
+ </div>`;
+ throw new Error("Missing parameter");
+}
 
-badge.className="badge "+cls;
-badge.textContent=icon;
+const cfg=apps[key];
+$("badge").className=`badge ${cfg.cls}`;
+$("badge").textContent=cfg.badge;
+$("channel").textContent=user;
+$("opening").textContent=`Opening ${user}`;
 
-document.getElementById("channel").textContent=user;
-document.getElementById("opening").textContent="Opening "+user;
+const appUrl=cfg.app(user), webUrl=cfg.web(user);
+let opened=false;
+document.addEventListener("visibilitychange",()=>{if(document.hidden)opened=true;},{once:true});
 
 requestAnimationFrame(()=>{
-
-    location.href=app;
-
-    setTimeout(()=>{
-        location.replace(web);
-    },200);
-
+ location.href=appUrl;
+ setTimeout(()=>{if(!opened)location.replace(webUrl);},1200);
 });
 </script>
-
 </body>
 </html>
