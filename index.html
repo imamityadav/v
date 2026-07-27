@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Opening YouTube...</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Opening...</title>
 
 <style>
 *{
@@ -14,7 +14,7 @@
 
 body{
     background:#fff;
-    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
     min-height:100vh;
 }
 
@@ -24,28 +24,37 @@ body{
     padding-top:8vh;
 }
 
-.logo{
-    width:78px;
-    height:56px;
-    background:#FF0000;
-    border-radius:14px;
-    margin:0 auto;
-    position:relative;
-    animation:logoPulse 1.4s ease-in-out infinite;
+.badge{
+    width:82px;
+    height:82px;
+    margin:auto;
+    border-radius:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:36px;
+    font-weight:800;
+    animation:pulse 1.2s infinite;
+    user-select:none;
 }
 
-.logo:before{
-    content:"";
-    position:absolute;
-    left:31px;
-    top:15px;
-    border-left:19px solid #fff;
-    border-top:12px solid transparent;
-    border-bottom:12px solid transparent;
+.youtube{
+    background:#ff0000;
+    border-radius:18px;
+}
+
+.instagram{
+    background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af,#515bd4);
+}
+
+.facebook{
+    background:#1877f2;
+    border-radius:50%;
 }
 
 .channel{
-    margin-top:20px;
+    margin-top:22px;
     font-size:32px;
     font-weight:800;
     color:#111;
@@ -54,14 +63,14 @@ body{
 }
 
 .opening{
-    margin-top:12px;
+    margin-top:10px;
     font-size:18px;
-    font-weight:600;
     color:#666;
-    animation:textPulse 1.1s ease-in-out infinite;
+    font-weight:600;
+    animation:textPulse 1.2s infinite;
 }
 
-@keyframes logoPulse{
+@keyframes pulse{
     0%,100%{
         transform:scale(1);
     }
@@ -73,11 +82,9 @@ body{
 @keyframes textPulse{
     0%,100%{
         opacity:.55;
-        transform:scale(1);
     }
     50%{
         opacity:1;
-        transform:scale(1.04);
     }
 }
 </style>
@@ -86,43 +93,72 @@ body{
 <body>
 
 <div class="box">
-    <div class="logo"></div>
 
-    <div id="channel" class="channel">Loading...</div>
+<div id="badge" class="badge">Y</div>
 
-    <div id="opening" class="opening">
-        Opening YouTube
-    </div>
+<div id="channel" class="channel">
+Loading...
+</div>
+
+<div id="opening" class="opening">
+Opening...
+</div>
+
 </div>
 
 <script>
-const h = new URLSearchParams(location.search).get("h");
+const p = new URLSearchParams(location.search);
 
-if (h) {
-    const user = h.replace(/^@/, "");
+let user = "";
+let app = "";
+let web = "";
+let cls = "youtube";
+let icon = "Y";
 
-    document.getElementById("channel").textContent = user;
-    document.getElementById("opening").textContent = "Opening " + user + " in YouTube";
-
-    requestAnimationFrame(() => {
-
-        // Try opening the YouTube app
-        location.href =
-            `intent://www.youtube.com/@${encodeURIComponent(user)}#Intent;scheme=https;package=com.google.android.youtube;end`;
-
-        // Fallback to website if app doesn't open
-        setTimeout(() => {
-            location.replace(
-                `https://www.youtube.com/@${encodeURIComponent(user)}`
-            );
-        }, 200);
-
-    });
-
-} else {
-    document.getElementById("channel").textContent = "Channel Not Found";
-    document.getElementById("opening").textContent = "Missing URL parameter: h";
+if (p.has("y")) {
+    user = p.get("y").replace(/^@/, "");
+    cls = "youtube";
+    icon = "▶";
+    app = `intent://www.youtube.com/@${encodeURIComponent(user)}#Intent;scheme=https;package=com.google.android.youtube;end`;
+    web = `https://www.youtube.com/@${encodeURIComponent(user)}`;
 }
+else if (p.has("i")) {
+    user = p.get("i").replace(/^@/, "");
+    cls = "instagram";
+    icon = "I";
+    app = `instagram://user?username=${encodeURIComponent(user)}`;
+    web = `https://instagram.com/${encodeURIComponent(user)}`;
+}
+else if (p.has("f")) {
+    user = p.get("f").replace(/^@/, "");
+    cls = "facebook";
+    icon = "F";
+    app = `fb://facewebmodal/f?href=https://facebook.com/${encodeURIComponent(user)}`;
+    web = `https://facebook.com/${encodeURIComponent(user)}`;
+}
+else{
+    document.getElementById("channel").textContent="Invalid Link";
+    document.getElementById("opening").textContent="Missing parameter";
+    throw "";
+}
+
+const badge=document.getElementById("badge");
+
+badge.className="badge "+cls;
+badge.textContent=icon;
+
+document.getElementById("channel").textContent=user;
+document.getElementById("opening").textContent="Opening "+user;
+
+requestAnimationFrame(()=>{
+
+    location.href=app;
+
+    setTimeout(()=>{
+        location.replace(web);
+    },200);
+
+});
 </script>
 
 </body>
