@@ -1,102 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Open Social Media Profiles directly in App</title>
+<title>Open App</title>
 
-<script>
-const p=new URLSearchParams(location.search);
-
-let app="",web="",u="";
-
-if(p.has("y")){
-    u=p.get("y").replace(/^@/,"");
-    app=`intent://www.youtube.com/@${encodeURIComponent(u)}#Intent;scheme=https;package=com.google.android.youtube;end`;
-    web=`https://www.youtube.com/@${encodeURIComponent(u)}`;
-}
-else if(p.has("i")){
-    u=p.get("i").replace(/^@/,"");
-    app=`instagram://user?username=${encodeURIComponent(u)}`;
-    web=`https://instagram.com/${encodeURIComponent(u)}`;
-}
-else if(p.has("f")){
-    u=p.get("f").replace(/^@/,"");
-    app=`fb://facewebmodal/f?href=https://facebook.com/${encodeURIComponent(u)}`;
-    web=`https://facebook.com/${encodeURIComponent(u)}`;
-}
-
-if(app){
-
-    let opened=false;
-
-    document.addEventListener("visibilitychange",()=>{
-        if(document.hidden) opened=true;
-    },{once:true});
-
-    location.href=app;
-
-    setTimeout(()=>{
-        if(!opened)
-            location.replace(web);
-    },1200);
-
-}else{
-
-document.write(`
 <style>
-body{
-margin:0;
-display:grid;
-place-items:center;
-height:100vh;
-font-family:system-ui;
-background:#fff;
-text-align:center
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#fff;
+    font-family:system-ui,sans-serif;
 }
-.face{
-font-size:72px;
-animation:bounce 1s infinite
+
+button{
+    padding:16px 28px;
+    font-size:18px;
+    font-weight:600;
+    border:none;
+    border-radius:12px;
+    background:#2563eb;
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,0,0,.15);
 }
-.eyes{
-animation:blink 2s infinite
-}
-h1{
-margin:15px 0 8px
-}
-p{
-color:#666;
-line-height:1.6
-}
-small{
-display:block;
-margin-top:30px;
-color:#999
-}
-@keyframes bounce{
-50%{transform:translateY(-10px)}
-}
-@keyframes blink{
-0%,44%,100%{opacity:1}
-45%,49%{opacity:0}
+
+button:active{
+    transform:scale(.98);
 }
 </style>
+</head>
+<body>
 
-<div class="face">(<span class="eyes">• •</span>)</div>
+<button id="openBtn">Tap to Open </button>
+<script>
+const p = new URLSearchParams(location.search);
 
-<h1>Oops!</h1>
+let app = "";
 
-<p>
-This link is incomplete.<br>
-Please check the URL.
-</p>
-
-<small>Created by Amit Yadav</small>
-`);
-
+if (p.has("y")) {
+    const u = p.get("y").replace(/^@/, "");
+    app = `intent://www.youtube.com/@${encodeURIComponent(u)}#Intent;scheme=https;package=com.google.android.youtube;end`;
 }
+else if (p.has("i")) {
+    const u = p.get("i").replace(/^@/, "");
+    app = `instagram://user?username=${encodeURIComponent(u)}`;
+}
+else if (p.has("f")) {
+    const u = p.get("f").replace(/^@/, "");
+    app = `fb://facewebmodal/f?href=https://facebook.com/${encodeURIComponent(u)}`;
+}
+
+function openApp() {
+    if (app) location.href = app;
+}
+
+document.getElementById("openBtn").onclick = openApp;
+
+// Try immediately on page load
+if (app) openApp();
 </script>
 
-</head>
-<body></body>
+</body>
 </html>
