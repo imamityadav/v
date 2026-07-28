@@ -1,57 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Open Social Account Directly in App</title>
+<title>Open</title>
+
+<style>
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#fff;
+    font-family:system-ui,sans-serif;
+}
+.container{
+    text-align:center;
+}
+button{
+    padding:16px 30px;
+    font-size:18px;
+    font-weight:600;
+    border:none;
+    border-radius:12px;
+    background:#2563eb;
+    color:#fff;
+    cursor:pointer;
+}
+button:active{
+    transform:scale(.98);
+}
+.credit{
+    margin-top:18px;
+    font-size:14px;
+    color:#888;
+}
+.error{
+    text-align:center;
+    padding:20px;
+}
+.error h2{
+    margin:12px 0;
+}
+.error p{
+    color:#666;
+}
+</style>
 
 <script>
 (() => {
+
 const q = new URLSearchParams(location.search);
 const ua = navigator.userAgent;
 
-const android = /Android/i.test(ua);
-const ios = /iPhone|iPad|iPod/i.test(ua);
+const mobile = /Android|iPhone|iPad|iPod/i.test(ua);
 
 let app="",web="",u="";
 
 if(q.has("y")){
     u=q.get("y").replace(/^@/,"");
+    app=`intent://www.youtube.com/@${encodeURIComponent(u)}#Intent;scheme=https;package=com.google.android.youtube;end`;
     web=`https://www.youtube.com/@${encodeURIComponent(u)}`;
-
-    app=android
-        ?`intent://www.youtube.com/@${encodeURIComponent(u)}#Intent;scheme=https;package=com.google.android.youtube;end`
-        :web;
 }
 else if(q.has("i")){
     u=q.get("i").replace(/^@/,"");
+    app=`instagram://user?username=${encodeURIComponent(u)}`;
     web=`https://www.instagram.com/${encodeURIComponent(u)}/`;
-
-    app=ios
-        ?`instagram://user?username=${encodeURIComponent(u)}`
-        :android
-        ?`instagram://user?username=${encodeURIComponent(u)}`
-        :web;
 }
 else if(q.has("f")){
     u=q.get("f").replace(/^@/,"");
+    app=`fb://facewebmodal/f?href=https://facebook.com/${encodeURIComponent(u)}`;
     web=`https://www.facebook.com/${encodeURIComponent(u)}`;
-
-    app=ios
-        ?`fb://profile/${encodeURIComponent(u)}`
-        :android
-        ?`fb://facewebmodal/f?href=${encodeURIComponent(web)}`
-        :web;
-}
-else{
-    return;
 }
 
-location.replace(android||ios ? app : web);
+window.openApp = () => {
+    if(app) location.href = app;
+};
+
+window.addEventListener("DOMContentLoaded", () => {
+
+    if(app){
+
+        if(mobile){
+            openApp();
+        }else{
+            location.replace(web);
+        }
+
+    }else{
+
+        document.body.innerHTML = `
+        <div class="error">
+            <div style="font-size:70px;">😕</div>
+            <h2>Invalid Link</h2>
+            <p>Missing parameter.</p>
+            <p>Please check the URL and try again.</p>
+
+            <div class="credit">
+                Created by <strong>Amit Yadav</strong>
+            </div>
+        </div>
+        `;
+
+    }
+
+});
 
 })();
 </script>
 
 </head>
-<body></body>
+<body>
+
+<div class="container">
+
+    <button onclick="openApp()">📱 Tap to Open</button>
+
+    <div class="credit">
+        Created by <strong>Amit Yadav</strong>
+    </div>
+
+</div>
+
+</body>
 </html>
