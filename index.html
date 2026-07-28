@@ -14,7 +14,7 @@ html,body{
     justify-content:center;
     align-items:center;
     background:#fff;
-    font-family:system-ui,sans-serif;
+    font-family:system-ui,-apple-system,sans-serif;
 }
 .container{
     text-align:center;
@@ -28,14 +28,10 @@ button{
     background:#2563eb;
     color:#fff;
     cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,0,0,.15);
 }
 button:active{
     transform:scale(.98);
-}
-.credit{
-    margin-top:18px;
-    font-size:14px;
-    color:#888;
 }
 .error{
     text-align:center;
@@ -45,7 +41,17 @@ button:active{
     margin:12px 0;
 }
 .error p{
+    margin:6px 0;
     color:#666;
+}
+.credit{
+    position:fixed;
+    left:50%;
+    bottom:20px;
+    transform:translateX(-50%);
+    font-size:14px;
+    color:#888;
+    text-align:center;
 }
 </style>
 
@@ -92,16 +98,16 @@ window.addEventListener("DOMContentLoaded", () => {
     }else{
 
         document.body.innerHTML = `
-        <div class="error">
-            <div style="font-size:70px;">😕</div>
-            <h2>Invalid Link</h2>
-            <p>Missing parameter.</p>
-            <p>Please check the URL and try again.</p>
+            <div class="error">
+                <div style="font-size:70px;">😕</div>
+                <h2>Invalid Link</h2>
+                <p>Missing parameter.</p>
+                <p>Please check the URL and try again.</p>
+            </div>
 
             <div class="credit">
-                Created by <strong>Amit Yadav</strong>
+                Created with ❤️ by <strong>Amit Yadav</strong>
             </div>
-        </div>
         `;
 
     }
@@ -115,13 +121,11 @@ window.addEventListener("DOMContentLoaded", () => {
 <body>
 
 <div class="container">
-
     <button onclick="openApp()">📱 Tap to Open</button>
+</div>
 
-    <div class="credit">
-        Created by <strong>Amit Yadav</strong>
-    </div>
-
+<div class="credit">
+    Created with ❤️ by <strong>Amit Yadav</strong>
 </div>
 
 </body>
