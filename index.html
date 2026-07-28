@@ -1,77 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Open Social Profile</title>
-<meta name="description" content="Open YouTube, Instagram or Facebook profiles directly in the app.">
-
-<meta property="og:type" content="website">
-<meta property="og:title" content="Open Social Profile">
-<meta property="og:description" content="Tap to open directly in YouTube, Instagram or Facebook.">
-<meta property="og:image" content="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&h=630&q=80">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Open Social Profile">
-<meta name="twitter:description" content="Tap to open directly in YouTube, Instagram or Facebook.">
-<meta name="twitter:image" content="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&h=630&q=80">
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#fff;min-height:100vh}
-.box{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:8vh}
-.badge{min-width:82px;height:82px;padding:0 20px;border-radius:22px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;white-space:nowrap;animation:pulse 1.2s infinite}
-.youtube{background:#ff0000;font-size:36px;min-width:90px;padding:0;border-radius:18px}
-.instagram{background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af,#515bd4);font-size:18px}
-.facebook{background:#1877f2;font-size:18px}
-.channel{margin-top:22px;font-size:32px;font-weight:800;color:#111;padding:0 20px;word-break:break-word}
-.opening{margin-top:10px;font-size:18px;color:#666;font-weight:600;animation:textPulse 1.2s infinite}
-.credit{position:fixed;left:0;right:0;bottom:16px;text-align:center;color:#999;font-size:13px}
-.errorFace{font-size:74px;animation:bounce 1s infinite}
-.eyes{display:inline-block;animation:blink 2s infinite}
-@keyframes pulse{50%{transform:scale(1.08)}}
-@keyframes textPulse{0%,100%{opacity:.55}50%{opacity:1}}
-@keyframes bounce{50%{transform:translateY(-10px)}}
-@keyframes blink{0%,44%,100%{opacity:1}45%,49%{opacity:0}}
-</style>
-</head>
-<body>
-<div class="box">
-<div id="badge" class="badge youtube">▶</div>
-<div id="channel" class="channel">Loading...</div>
-<div id="opening" class="opening">Opening...</div>
-</div>
-<div class="credit">Created by Amit Yadav</div>
+<title>Open Social Media Profiles directly in App</title>
 
 <script>
-const $=i=>document.getElementById(i);
-const apps={
-y:{cls:"youtube",badge:"▶",app:u=>`intent://www.youtube.com/@${encodeURIComponent(u)}#Intent;scheme=https;package=com.google.android.youtube;end`,web:u=>`https://www.youtube.com/@${encodeURIComponent(u)}`},
-i:{cls:"instagram",badge:"Instagram",app:u=>`instagram://user?username=${encodeURIComponent(u)}`,web:u=>`https://instagram.com/${encodeURIComponent(u)}`},
-f:{cls:"facebook",badge:"Facebook",app:u=>`fb://facewebmodal/f?href=https://facebook.com/${encodeURIComponent(u)}`,web:u=>`https://facebook.com/${encodeURIComponent(u)}`}
-};
 const p=new URLSearchParams(location.search);
-let k,u;
-for(const x in apps){if(p.has(x)){k=x;u=p.get(x).replace(/^@/,"");break;}}
-if(!k){
-document.querySelector(".box").innerHTML='<div class="errorFace">(<span class="eyes">• •</span>)</div><div class="channel">Oops!</div><div class="opening">This link is incomplete.<br>Please check the URL.</div>';
-throw new Error("Missing parameter");
+
+let app="",web="",u="";
+
+if(p.has("y")){
+    u=p.get("y").replace(/^@/,"");
+    app=`intent://www.youtube.com/@${encodeURIComponent(u)}#Intent;scheme=https;package=com.google.android.youtube;end`;
+    web=`https://www.youtube.com/@${encodeURIComponent(u)}`;
 }
-const c=apps[k];
-$("badge").className="badge "+c.cls;
-$("badge").textContent=c.badge;
-$("channel").textContent=u;
-$("opening").textContent="Opening "+u;
-const app=c.app(u),web=c.web(u);
-let hidden=false;
-document.addEventListener("visibilitychange",()=>{if(document.hidden)hidden=true;},{once:true});
-requestAnimationFrame(()=>{
-location.href=app;
-setTimeout(()=>{if(!hidden)location.replace(web);},1200);
-});
+else if(p.has("i")){
+    u=p.get("i").replace(/^@/,"");
+    app=`instagram://user?username=${encodeURIComponent(u)}`;
+    web=`https://instagram.com/${encodeURIComponent(u)}`;
+}
+else if(p.has("f")){
+    u=p.get("f").replace(/^@/,"");
+    app=`fb://facewebmodal/f?href=https://facebook.com/${encodeURIComponent(u)}`;
+    web=`https://facebook.com/${encodeURIComponent(u)}`;
+}
+
+if(app){
+
+    let opened=false;
+
+    document.addEventListener("visibilitychange",()=>{
+        if(document.hidden) opened=true;
+    },{once:true});
+
+    location.href=app;
+
+    setTimeout(()=>{
+        if(!opened)
+            location.replace(web);
+    },1200);
+
+}else{
+
+document.write(`
+<style>
+body{
+margin:0;
+display:grid;
+place-items:center;
+height:100vh;
+font-family:system-ui;
+background:#fff;
+text-align:center
+}
+.face{
+font-size:72px;
+animation:bounce 1s infinite
+}
+.eyes{
+animation:blink 2s infinite
+}
+h1{
+margin:15px 0 8px
+}
+p{
+color:#666;
+line-height:1.6
+}
+small{
+display:block;
+margin-top:30px;
+color:#999
+}
+@keyframes bounce{
+50%{transform:translateY(-10px)}
+}
+@keyframes blink{
+0%,44%,100%{opacity:1}
+45%,49%{opacity:0}
+}
+</style>
+
+<div class="face">(<span class="eyes">• •</span>)</div>
+
+<h1>Oops!</h1>
+
+<p>
+This link is incomplete.<br>
+Please check the URL.
+</p>
+
+<small>Created by Amit Yadav</small>
+`);
+
+}
 </script>
-</body>
+
+</head>
+<body></body>
 </html>
