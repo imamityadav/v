@@ -10,13 +10,15 @@ html,body{
     margin:0;
     width:100%;
     height:100%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
     background:#fff;
     font-family:system-ui,-apple-system,sans-serif;
 }
-.container{
+.page{
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
     text-align:center;
 }
 button{
@@ -28,21 +30,9 @@ button{
     background:#2563eb;
     color:#fff;
     cursor:pointer;
-    box-shadow:0 4px 12px rgba(0,0,0,.15);
 }
 button:active{
     transform:scale(.98);
-}
-.error{
-    text-align:center;
-    padding:20px;
-}
-.error h2{
-    margin:12px 0;
-}
-.error p{
-    margin:6px 0;
-    color:#666;
 }
 .credit{
     position:fixed;
@@ -51,16 +41,19 @@ button:active{
     transform:translateX(-50%);
     font-size:14px;
     color:#888;
-    text-align:center;
+}
+.error h2{
+    margin:12px 0;
+}
+.error p{
+    margin:6px 0;
+    color:#666;
 }
 </style>
 
 <script>
-(() => {
-
 const q = new URLSearchParams(location.search);
 const ua = navigator.userAgent;
-
 const mobile = /Android|iPhone|iPad|iPod/i.test(ua);
 
 let app="",web="",u="";
@@ -81,52 +74,53 @@ else if(q.has("f")){
     web=`https://www.facebook.com/${encodeURIComponent(u)}`;
 }
 
-window.openApp = () => {
-    if(app) location.href = app;
-};
+function openApp(){
+    location.href = app;
+}
 
-window.addEventListener("DOMContentLoaded", () => {
-
-    if(app){
-
-        if(mobile){
-            openApp();
-        }else{
-            location.replace(web);
-        }
-
+// Try opening immediately
+if(app){
+    if(mobile){
+        openApp();
     }else{
-
-        document.body.innerHTML = `
-            <div class="error">
-                <div style="font-size:70px;">😕</div>
-                <h2>Invalid Link</h2>
-                <p>Missing parameter.</p>
-                <p>Please check the URL and try again.</p>
-            </div>
-
-            <div class="credit">
-                Created with ❤️ by <strong>Amit Yadav</strong>
-            </div>
-        `;
-
+        location.replace(web);
     }
-
-});
-
-})();
+}
 </script>
 
 </head>
 <body>
 
-<div class="container">
-    <button onclick="openApp()">Tap to Open</button>
-</div>
+<script>
+if(app){
 
-<div class="credit">
-    Created with ❤️ by <strong>Amit Yadav</strong>
-</div>
+    document.body.innerHTML=`
+    <div class="page">
+        <button onclick="openApp()">Tap to Open</button>
+    </div>
+
+    <div class="credit">
+        Created with ❤️ by <strong>Amit Yadav</strong>
+    </div>
+    `;
+
+}else{
+
+    document.body.innerHTML=`
+    <div class="page error">
+        <div style="font-size:70px;">😕</div>
+        <h2>Invalid Link</h2>
+        <p>Missing parameter.</p>
+        <p>Please check the URL and try again.</p>
+    </div>
+
+    <div class="credit">
+        Created with ❤️ by <strong>Amit Yadav</strong>
+    </div>
+    `;
+
+}
+</script>
 
 </body>
 </html>
