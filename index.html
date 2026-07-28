@@ -1,69 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Open App</title>
+<title>Open Social Account Directly in App</title>
 
-<style>
-html,body{
-    margin:0;
-    width:100%;
-    height:100%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#fff;
-    font-family:system-ui,sans-serif;
-}
-
-button{
-    padding:16px 28px;
-    font-size:18px;
-    font-weight:600;
-    border:none;
-    border-radius:12px;
-    background:#2563eb;
-    color:#fff;
-    cursor:pointer;
-    box-shadow:0 4px 12px rgba(0,0,0,.15);
-}
-
-button:active{
-    transform:scale(.98);
-}
-</style>
-</head>
-<body>
-
-<button id="openBtn">Tap to Open </button>
 <script>
-const p = new URLSearchParams(location.search);
+(() => {
+const q = new URLSearchParams(location.search);
+const ua = navigator.userAgent;
 
-let app = "";
+const android = /Android/i.test(ua);
+const ios = /iPhone|iPad|iPod/i.test(ua);
 
-if (p.has("y")) {
-    const u = p.get("y").replace(/^@/, "");
-    app = `intent://www.youtube.com/@${encodeURIComponent(u)}#Intent;scheme=https;package=com.google.android.youtube;end`;
+let app="",web="",u="";
+
+if(q.has("y")){
+    u=q.get("y").replace(/^@/,"");
+    web=`https://www.youtube.com/@${encodeURIComponent(u)}`;
+
+    app=android
+        ?`intent://www.youtube.com/@${encodeURIComponent(u)}#Intent;scheme=https;package=com.google.android.youtube;end`
+        :web;
 }
-else if (p.has("i")) {
-    const u = p.get("i").replace(/^@/, "");
-    app = `instagram://user?username=${encodeURIComponent(u)}`;
+else if(q.has("i")){
+    u=q.get("i").replace(/^@/,"");
+    web=`https://www.instagram.com/${encodeURIComponent(u)}/`;
+
+    app=ios
+        ?`instagram://user?username=${encodeURIComponent(u)}`
+        :android
+        ?`instagram://user?username=${encodeURIComponent(u)}`
+        :web;
 }
-else if (p.has("f")) {
-    const u = p.get("f").replace(/^@/, "");
-    app = `fb://facewebmodal/f?href=https://facebook.com/${encodeURIComponent(u)}`;
+else if(q.has("f")){
+    u=q.get("f").replace(/^@/,"");
+    web=`https://www.facebook.com/${encodeURIComponent(u)}`;
+
+    app=ios
+        ?`fb://profile/${encodeURIComponent(u)}`
+        :android
+        ?`fb://facewebmodal/f?href=${encodeURIComponent(web)}`
+        :web;
+}
+else{
+    return;
 }
 
-function openApp() {
-    if (app) location.href = app;
-}
+location.replace(android||ios ? app : web);
 
-document.getElementById("openBtn").onclick = openApp;
-
-// Try immediately on page load
-if (app) openApp();
+})();
 </script>
 
-</body>
+</head>
+<body></body>
 </html>
