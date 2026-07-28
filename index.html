@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Open Social Account directly into App</title>
+<title>Open</title>
 
 <style>
 html,body{
@@ -22,10 +22,10 @@ html,body{
     text-align:center;
 }
 button{
-    padding:16px 30px;
+    padding:16px 32px;
     font-size:18px;
     font-weight:600;
-    border:none;
+    border:0;
     border-radius:12px;
     background:#2563eb;
     color:#fff;
@@ -39,8 +39,8 @@ button:active{
     left:50%;
     bottom:20px;
     transform:translateX(-50%);
-    font-size:14px;
     color:#888;
+    font-size:14px;
 }
 .error h2{
     margin:12px 0;
@@ -52,9 +52,10 @@ button:active{
 </style>
 
 <script>
-const q = new URLSearchParams(location.search);
-const ua = navigator.userAgent;
-const mobile = /Android|iPhone|iPad|iPod/i.test(ua);
+const q=new URLSearchParams(location.search);
+const ua=navigator.userAgent;
+
+const mobile=/Android|iPhone|iPad|iPod/i.test(ua);
 
 let app="",web="",u="";
 
@@ -75,16 +76,12 @@ else if(q.has("f")){
 }
 
 function openApp(){
-    location.href = app;
+    if(app) location.href=app;
 }
 
-// Try opening immediately
-if(app){
-    if(mobile){
-        openApp();
-    }else{
-        location.replace(web);
-    }
+// Desktop: redirect immediately
+if(app && !mobile){
+    location.replace(web);
 }
 </script>
 
@@ -92,32 +89,37 @@ if(app){
 <body>
 
 <script>
-if(app){
+if(!app){
 
-    document.body.innerHTML=`
-    <div class="page">
-        <button onclick="openApp()">Tap to Open</button>
-    </div>
+document.body.innerHTML=`
+<div class="page error">
+    <div style="font-size:70px;">😕</div>
+    <h2>Invalid Link</h2>
+    <p>Missing parameter.</p>
+    <p>Please check the URL and try again.</p>
+</div>
 
-    <div class="credit">
-        Created with ❤️ by <strong>Amit Yadav</strong>
-    </div>
-    `;
+<div class="credit">
+    Created with ❤️ by <strong>Amit Yadav</strong>
+</div>
+`;
 
-}else{
+}else if(mobile){
 
-    document.body.innerHTML=`
-    <div class="page error">
-        <div style="font-size:70px;">😕</div>
-        <h2>Invalid Link</h2>
-        <p>Missing parameter.</p>
-        <p>Please check the URL and try again.</p>
-    </div>
+document.body.innerHTML=`
+<div class="page">
+    <button onclick="openApp()">📱 Tap to Open</button>
+</div>
 
-    <div class="credit">
-        Created with ❤️ by <strong>Amit Yadav</strong>
-    </div>
-    `;
+<div class="credit">
+    Created with ❤️ by <strong>Amit Yadav</strong>
+</div>
+`;
+
+// Allow one paint, then try opening the app.
+requestAnimationFrame(()=>{
+    requestAnimationFrame(openApp);
+});
 
 }
 </script>
